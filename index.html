@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capitalismo a Través de la Historia</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0906;
+    --surface: #12100d;
+    --gold: #c9a84c;
+    --gold-light: #e8c96a;
+    --gold-dim: #7a6230;
+    --cream: #f0e8d5;
+    --rust: #8b3a2a;
+    --teal: #2a7a6e;
+    --ink: #1a1510;
+    --text: #d4c9b0;
+    --text-dim: #7a7060;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 10px; height: 10px;
+    background: var(--gold);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s, height 0.2s, background 0.2s;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all 0.12s ease-out;
+    opacity: 0.6;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 40%, rgba(201,168,76,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 30% at 20% 70%, rgba(42,122,110,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 30% 20% at 80% 20%, rgba(139,58,42,0.07) 0%, transparent 60%);
+  }
+
+  /* grain */
+  .hero::after {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 1;
+  }
+
+  /* decorative lines */
+  .hero-lines {
+    position: absolute; inset: 0; pointer-events: none;
+    overflow: hidden;
+  }
+  .hero-lines::before, .hero-lines::after {
+    content: '';
+    position: absolute;
+    border: 1px solid rgba(201,168,76,0.12);
+  }
+  .hero-lines::before {
+    top: 10%; left: 5%; right: 5%; bottom: 10%;
+  }
+  .hero-lines::after {
+    top: 12%; left: 7%; right: 7%; bottom: 12%;
+  }
+
+  .hero-content {
+    position: relative; z-index: 2;
+    text-align: center;
+    max-width: 900px;
+    padding: 0 2rem;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 1s 0.3s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-weight: 900;
+    line-height: 0.95;
+    color: var(--cream);
+    opacity: 0;
+    animation: fadeUp 1s 0.5s forwards;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold);
+    display: block;
+  }
+
+  .hero-sub {
+    font-family: 'Barlow', sans-serif;
+    font-size: 1rem;
+    font-weight: 300;
+    color: var(--text-dim);
+    margin-top: 2rem;
+    letter-spacing: 0.06em;
+    opacity: 0;
+    animation: fadeUp 1s 0.8s forwards;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0;
+    animation: fadeIn 1s 1.5s forwards;
+    z-index: 2;
+  }
+  .scroll-hint span {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+  .scroll-arrow {
+    width: 1px;
+    height: 50px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scrollPulse 2s infinite;
+  }
+
+  /* ── TIMELINE ── */
+  .timeline {
+    position: relative;
+    padding: 6rem 0 8rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* central line */
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom,
+      transparent 0%,
+      var(--gold-dim) 5%,
+      var(--gold-dim) 95%,
+      transparent 100%);
+    transform: translateX(-50%);
+  }
+
+  /* ── ENTRY ── */
+  .entry {
+    display: grid;
+    grid-template-columns: 1fr 60px 1fr;
+    align-items: center;
+    margin-bottom: 7rem;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .entry.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* alternate left/right */
+  .entry:nth-child(odd) .entry-card  { grid-column: 1; text-align: right; padding-right: 3rem; }
+  .entry:nth-child(odd) .entry-node  { grid-column: 2; }
+  .entry:nth-child(odd) .entry-empty { grid-column: 3; }
+
+  .entry:nth-child(even) .entry-empty { grid-column: 1; }
+  .entry:nth-child(even) .entry-node  { grid-column: 2; }
+  .entry:nth-child(even) .entry-card  { grid-column: 3; grid-row: 1; text-align: left; padding-left: 3rem; }
+
+  /* node */
+  .entry-node {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+  .node-circle {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--gold);
+    position: relative;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+  }
+  .node-circle::after {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    background: var(--gold);
+    transform: scale(0);
+    transition: transform 0.3s;
+  }
+  .entry:hover .node-circle {
+    transform: scale(1.5);
+    box-shadow: 0 0 20px rgba(201,168,76,0.5);
+  }
+  .entry:hover .node-circle::after {
+    transform: scale(1);
+  }
+
+  /* card */
+  .entry-card {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .entry-era {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.4rem;
+  }
+
+  .entry-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.4rem, 2.5vw, 2rem);
+    font-weight: 700;
+    color: var(--cream);
+    line-height: 1.15;
+    margin-bottom: 0.8rem;
+  }
+
+  .entry-subtitle {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+
+  .entry-text {
+    font-size: 0.88rem;
+    line-height: 1.75;
+    color: var(--text-dim);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease;
+  }
+  .entry-card.open .entry-text {
+    max-height: 600px;
+  }
+
+  .entry-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.8rem;
+  }
+  .entry:nth-child(odd) .entry-tags { justify-content: flex-end; }
+
+  .tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.7rem;
+    border: 1px solid;
+    color: var(--gold-dim);
+    border-color: var(--gold-dim);
+    transition: color 0.3s, border-color 0.3s, background 0.3s;
+  }
+  .entry:hover .tag {
+    color: var(--gold);
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.05);
+  }
+
+  .expand-btn {
+    margin-top: 0.8rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: gap 0.3s;
+  }
+  .expand-btn:hover { gap: 0.8rem; }
+  .expand-btn .arrow {
+    display: inline-block;
+    transition: transform 0.3s;
+  }
+  .entry-card.open .expand-btn .arrow {
+    transform: rotate(90deg);
+  }
+
+  /* connector line from card to node */
+  .entry:nth-child(odd) .entry-card::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 1.4rem;
+    width: 2.5rem;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold-dim));
+  }
+  .entry:nth-child(even) .entry-card::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 1.4rem;
+    width: 2.5rem;
+    height: 1px;
+    background: linear-gradient(to left, transparent, var(--gold-dim));
+  }
+
+  /* accent number */
+  .entry-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 5rem;
+    font-weight: 900;
+    color: rgba(201,168,76,0.05);
+    position: absolute;
+    line-height: 1;
+    pointer-events: none;
+    transition: color 0.4s;
+  }
+  .entry:nth-child(odd) .entry-number {
+    right: 2.5rem; top: -1.5rem;
+  }
+  .entry:nth-child(even) .entry-number {
+    left: 2.5rem; top: -1.5rem;
+  }
+  .entry:hover .entry-number {
+    color: rgba(201,168,76,0.1);
+  }
+
+  /* COLOR ACCENTS per entry */
+  .entry.rust .entry-era { color: #c96a50; }
+  .entry.rust .node-circle { border-color: #c96a50; }
+  .entry.rust .node-circle::after { background: #c96a50; }
+  .entry.rust:hover .node-circle { box-shadow: 0 0 20px rgba(201,106,80,0.5); }
+  .entry.rust .tag { color: #8b3a2a; border-color: #8b3a2a; }
+  .entry.rust:hover .tag { color: #c96a50; border-color: #c96a50; background: rgba(201,106,80,0.05); }
+  .entry.rust .expand-btn { color: #c96a50; }
+
+  .entry.teal .entry-era { color: #4ab8a8; }
+  .entry.teal .node-circle { border-color: #4ab8a8; }
+  .entry.teal .node-circle::after { background: #4ab8a8; }
+  .entry.teal:hover .node-circle { box-shadow: 0 0 20px rgba(74,184,168,0.5); }
+  .entry.teal .tag { color: #2a7a6e; border-color: #2a7a6e; }
+  .entry.teal:hover .tag { color: #4ab8a8; border-color: #4ab8a8; background: rgba(74,184,168,0.05); }
+  .entry.teal .expand-btn { color: #4ab8a8; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 4rem 2rem 5rem;
+    border-top: 1px solid rgba(201,168,76,0.1);
+    position: relative;
+  }
+  footer::before {
+    content: '◆';
+    display: block;
+    color: var(--gold);
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    opacity: 0.5;
+  }
+  footer p {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.4; transform: scaleY(1); }
+    50%       { opacity: 1;   transform: scaleY(1.1); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .timeline::before {
+      left: 24px;
+    }
+    .entry {
+      grid-template-columns: 48px 1fr;
+      grid-template-rows: auto;
+    }
+    .entry:nth-child(odd) .entry-card,
+    .entry:nth-child(even) .entry-card {
+      grid-column: 2;
+      grid-row: 1;
+      text-align: left;
+      padding-left: 1.5rem;
+      padding-right: 0;
+    }
+    .entry:nth-child(odd) .entry-node,
+    .entry:nth-child(even) .entry-node {
+      grid-column: 1;
+      grid-row: 1;
+    }
+    .entry:nth-child(odd) .entry-empty,
+    .entry:nth-child(even) .entry-empty {
+      display: none;
+    }
+    .entry:nth-child(odd) .entry-tags,
+    .entry:nth-child(even) .entry-tags { justify-content: flex-start; }
+    .entry:nth-child(odd) .entry-card::after,
+    .entry:nth-child(even) .entry-card::after {
+      left: 0; right: auto;
+      background: linear-gradient(to left, transparent, var(--gold-dim));
+    }
+    .entry:nth-child(odd) .entry-number,
+    .entry:nth-child(even) .entry-number {
+      left: 1rem; right: auto;
+    }
+    .timeline { padding: 4rem 1rem 6rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-lines"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Línea del tiempo · Historia económica</p>
+    <h1 class="hero-title">
+      El <em>Capitalismo</em>
+      a través de la historia
+    </h1>
+    <p class="hero-sub">Desde la economía feudal hasta el capitalismo global estratégico · Siglos IX–XXI</p>
+  </div>
+  <div class="scroll-hint">
+    <span>Desplazar</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="timeline" id="timeline">
+
+  <!-- 1 -->
+  <div class="entry rust" data-index="1">
+    <div class="entry-card" onclick="toggleCard(this)">
+      <div class="entry-number">01</div>
+      <p class="entry-era">Siglo IX — XV</p>
+      <h2 class="entry-title">Economía Feudal</h2>
+      <p class="entry-subtitle">Las raíces del orden económico medieval</p>
+      <div class="entry-text">
+        <p>La economía feudal era primordialmente agraria y autosuficiente. La tierra constituía la base de toda riqueza y se hallaba en manos de los señores feudales, quienes la distribuían entre campesinos y siervos a cambio de tributos y trabajo obligatorio.</p>
+        <br>
+        <p>La circulación monetaria era escasa: la mayoría de la producción se consumía dentro del propio feudo. Las relaciones de dependencia personal entre señores y vasallos estructuraban el orden social y productivo, configurando una economía cerrada, localizada y profundamente jerárquica.</p>
+        <br>
+        <p>Este sistema, aunque rígido, sentó las bases materiales sobre las que emergería el capitalismo mercantil: la concentración de excedentes, las primeras ferias comerciales y el lento resurgir de las ciudades comenzaron a horadar sus cimientos desde el siglo XII.</p>
+        <div class="entry-tags">
+          <span class="tag">Feudalismo</span>
+          <span class="tag">Tierra & Poder</span>
+          <span class="tag">Servidumbre</span>
+          <span class="tag">Autosuficiencia</span>
+        </div>
+      </div>
+      <button class="expand-btn" onclick="event.stopPropagation(); toggleCard(this.parentElement)">
+        Leer más <span class="arrow">→</span>
+      </button>
+    </div>
+    <div class="entry-node"><div class="node-circle"></div></div>
+    <div class="entry-empty"></div>
+  </div>
+
+  <!-- 2 -->
+  <div class="entry teal" data-index="2">
+    <div class="entry-empty"></div>
+    <div class="entry-node"><div class="node-circle"></div></div>
+    <div class="entry-card" onclick="toggleCard(this)">
+      <div class="entry-number">02</div>
+      <p class="entry-era">Siglo XVI — XVIII</p>
+      <h2 class="entry-title">Acumulación Original & Capitalismo Mercantil</h2>
+      <p class="entry-subtitle">El comercio como motor de riqueza</p>
+      <div class="entry-text">
+        <p>La acumulación originaria es el proceso histórico mediante el cual se reunió el capital inicial que hizo posible el capitalismo. Los campesinos fueron separados de sus tierras, despojados de sus medios de producción y empujados hacia el trabajo asalariado, mientras una minoría concentraba riqueza y recursos.</p>
+        <br>
+        <p>El capitalismo mercantil, etapa temprana del sistema, basó su lógica en el comercio internacional, la atesoración de metales preciosos y la expansión colonial. Los Estados europeos intervinieron activamente para controlar rutas, monopolios comerciales y fuentes de materias primas.</p>
+        <br>
+        <p>La conquista de América, el tráfico esclavista y el saqueo de las periferias alimentaron esta acumulación. La Compañía Británica de las Indias Orientales y sus equivalentes representaron la fusión temprana entre capital privado, expansión imperial y poder estatal.</p>
+        <div class="entry-tags">
+          <span class="tag">Colonialismo</span>
+          <span class="tag">Mercantilismo</span>
+          <span class="tag">Acumulación</span>
+          <span class="tag">Comercio global</span>
+        </div>
+      </div>
+      <button class="expand-btn" onclick="event.stopPropagation(); toggleCard(this.parentElement)">
+        Leer más <span class="arrow">→</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 3 -->
+  <div class="entry" data-index="3">
+    <div class="entry-card" onclick="toggleCard(this)">
+      <div class="entry-number">03</div>
+      <p class="entry-era">1760 — 1840</p>
+      <h2 class="entry-title">Primera Revolución Industrial</h2>
+      <p class="entry-subtitle">La máquina transforma el mundo</p>
+      <div class="entry-text">
+        <p>La introducción de máquinas de vapor, telares mecánicos y fábricas transformó radicalmente la producción artesanal en producción industrial. Gran Bretaña fue el epicentro de esta metamorfosis: sus hilanderías de algodón, sus fundiciones y sus ferrocarriles inauguraron una nueva era civilizatoria.</p>
+        <br>
+        <p>El trabajo asalariado se generalizó. Las ciudades crecieron vertiginosamente. La burguesía industrial ascendió como clase dominante mientras el proletariado urbano emergía como nueva fuerza social, sometido a jornadas agotadoras y condiciones de vida miserables.</p>
+        <br>
+        <p>El capitalismo industrial consolidó la acumulación de capital mediante la plusvalía obtenida en la fábrica. Las ideas de Adam Smith y, más tarde, las críticas de Marx surgieron precisamente para dar cuenta de este nuevo orden económico que redefiniría la civilización occidental.</p>
+        <div class="entry-tags">
+          <span class="tag">Vapor & Acero</span>
+          <span class="tag">Proletariado</span>
+          <span class="tag">Fábricas</span>
+          <span class="tag">Urbanización</span>
+        </div>
+      </div>
+      <button class="expand-btn" onclick="event.stopPropagation(); toggleCard(this.parentElement)">
+        Leer más <span class="arrow">→</span>
+      </button>
+    </div>
+    <div class="entry-node"><div class="node-circle"></div></div>
+    <div class="entry-empty"></div>
+  </div>
+
+  <!-- 4 -->
+  <div class="entry rust" data-index="4">
+    <div class="entry-empty"></div>
+    <div class="entry-node"><div class="node-circle"></div></div>
+    <div class="entry-card" onclick="toggleCard(this)">
+      <div class="entry-number">04</div>
+      <p class="entry-era">Finales del S. XIX — Inicios S. XX</p>
+      <h2 class="entry-title">Nacimiento del Capitalismo Moderno</h2>
+      <p class="entry-subtitle">Segunda Revolución Industrial y capital financiero</p>
+      <div class="entry-text">
+        <p>La electricidad, el teléfono, el ferrocarril intercontinental y la química industrial inauguraron la Segunda Revolución Industrial. El capitalismo transitó de su fase comercial a una plenamente industrial y financiera: la producción a gran escala, los monopolios y los trust corporativos redefinieron la economía.</p>
+        <br>
+        <p>Surgieron los grandes empresarios —Carnegie, Rockefeller, Morgan— y con ellos la banca moderna, el crédito corporativo y los primeros mercados financieros estructurados. La bolsa de valores dejó de ser una curiosidad para convertirse en el corazón del sistema.</p>
+        <br>
+        <p>El imperialismo fue la expresión exterior de esta expansión: las potencias europeas se repartieron África y Asia para asegurarse mercados, recursos y mano de obra. Lenin lo denominó "la fase superior del capitalismo".</p>
+        <div class="entry-tags">
+          <span class="tag">Electricidad</span>
+          <span class="tag">Monopolios</span>
+          <span class="tag">Banca moderna</span>
+          <span class="tag">Imperialismo</span>
+        </div>
+      </div>
+      <button class="expand-btn" onclick="event.stopPropagation(); toggleCard(this.parentElement)">
+        Leer más <span class="arrow">→</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 5 -->
+  <div class="entry teal" data-index="5">
+    <div class="entry-card" onclick="toggleCard(this)">
+      <div class="entry-number">05</div>
+      <p class="entry-era">Inicios del Siglo XX</p>
+      <h2 class="entry-title">Era de Producción en Masa</h2>
+      <p class="entry-subtitle">Ford, Taylor y la cadena de ensamblaje</p>
+      <div class="entry-text">
+        <p>Henry Ford revolucionó la producción con la línea de ensamblaje móvil en Highland Park (1913). El Ford Model T se convirtió en símbolo de una nueva era: por primera vez, los trabajadores podían aspirar a consumir los bienes que fabricaban. El salario de cinco dólares diarios no fue filantropía sino estrategia de mercado.</p>
+        <br>
+        <p>El taylorismo —gestión científica del trabajo— descompuso cada tarea en movimientos mínimos y medibles, maximizando la eficiencia y subordinando el cuerpo obrero a los ritmos de la máquina. La Primera Guerra Mundial aceleró este proceso al exigir producción masiva y rápida de armamento.</p>
+        <br>
+        <p>El capitalismo pasó de centrarse en inventar a producir masivamente. La reducción de costes unitarios amplió el consumo, sentando las bases de la sociedad de consumo que eclosionaría después de 1945.</p>
+        <div class="entry-tags">
+          <span class="tag">Fordismo</span>
+          <span class="tag">Taylorismo</span>
+          <span class="tag">Consumo masivo</span>
+          <span class="tag">Guerra industrial</span>
+        </div>
+      </div>
+      <button class="expand-btn" onclick="event.stopPropagation(); toggleCard(this.parentElement)">
+        Leer más <span class="arrow">→</span>
+      </button>
+    </div>
+    <div class="entry-node"><div class="node-circle"></div></div>
+    <div class="entry-empty"></div>
+  </div>
+
+  <!-- 6 -->
+  <div class="entry" data-index="6">
+    <div class="entry-empty"></div>
+    <div class="entry-node"><div class="node-circle"></div></div>
+    <div class="entry-card" onclick="toggleCard(this)">
+      <div class="entry-number">06</div>
+      <p class="entry-era">1914 — 1945</p>
+      <h2 class="entry-title">Medios, Poder e Innovación</h2>
+      <p class="entry-subtitle">Entre guerras: crisis, propaganda y tecnología</p>
+      <div class="entry-text">
+        <p>El período de entreguerras fue una encrucijada convulsa: el crack de 1929 sumió al capitalismo en su mayor crisis hasta entonces, forzando al Estado a asumir un papel rector inédito. El New Deal de Roosevelt y el keynesianismo redefinieron la relación entre mercado y gobierno.</p>
+        <br>
+        <p>Simultáneamente, la radio y el cine sonoro emergieron como instrumentos de comunicación masiva. Fueron herramientas de entretenimiento, pero también de propaganda: tanto las democracias como los regímenes totalitarios comprendieron el poder de los medios para moldear la opinión pública y el comportamiento del consumidor.</p>
+        <br>
+        <p>La aviación comercial, los primeros cálculos computacionales (Turing, 1936) y los desarrollos de la industria química y farmacéutica prefiguraron la segunda posguerra. La Segunda Guerra Mundial fue, paradójicamente, el mayor acelerador tecnológico de la historia moderna.</p>
+        <div class="entry-tags">
+          <span class="tag">Radio & Cine</span>
+          <span class="tag">Keynesianismo</span>
+          <span class="tag">Propaganda</span>
+          <span class="tag">Innovación bélica</span>
+        </div>
+      </div>
+      <button class="expand-btn" onclick="event.stopPropagation(); toggleCard(this.parentElement)">
+        Leer más <span class="arrow">→</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 7 -->
+  <div class="entry rust" data-index="7">
+    <div class="entry-card" onclick="toggleCard(this)">
+      <div class="entry-number">07</div>
+      <p class="entry-era">1930s — 1970s</p>
+      <h2 class="entry-title">La Industria del Entretenimiento</h2>
+      <p class="entry-subtitle">Hollywood, la televisión y el ocio como mercancía</p>
+      <div class="entry-text">
+        <p>Hollywood construyó el primer gran sistema de entretenimiento industrial del mundo. Los estudios —MGM, Paramount, Warner— aplicaron las lógicas del fordismo a la producción cultural: estrellas contratadas, géneros estandarizados, distribución global. El cine fue la primera gran industria cultural del capitalismo.</p>
+        <br>
+        <p>La llegada de la televisión en los años 50 transformó el hogar en el nuevo espacio del consumo y del ocio. La publicidad televisiva se convirtió en el motor de la economía de consumo: los anunciantes financiaban el entretenimiento para acceder a la atención de las audiencias —lógica que anticipa el modelo digital del siglo XXI.</p>
+        <br>
+        <p>La industria discográfica, los cómics, los parques temáticos (Disneyland, 1955) y el deporte espectáculo completaron un ecosistema donde el tiempo libre se monetizaba sistemáticamente. Theodor Adorno y Max Horkheimer acuñaron el término "industria cultural" para criticar esta mercantilización de la experiencia estética.</p>
+        <div class="entry-tags">
+          <span class="tag">Hollywood</span>
+          <span class="tag">Televisión</span>
+          <span class="tag">Publicidad</span>
+          <span class="tag">Cultura de masas</span>
+        </div>
+      </div>
+      <button class="expand-btn" onclick="event.stopPropagation(); toggleCard(this.parentElement)">
+        Leer más <span class="arrow">→</span>
+      </button>
+    </div>
+    <div class="entry-node"><div class="node-circle"></div></div>
+    <div class="entry-empty"></div>
+  </div>
+
+  <!-- 8 -->
+  <div class="entry teal" data-index="8">
+    <div class="entry-empty"></div>
+    <div class="entry-node"><div class="node-circle"></div></div>
+    <div class="entry-card" onclick="toggleCard(this)">
+      <div class="entry-number">08</div>
+      <p class="entry-era">1945 — 1970s</p>
+      <h2 class="entry-title">Posguerra y Consumo Global</h2>
+      <p class="entry-subtitle">Los treinta gloriosos y la sociedad de consumo</p>
+      <div class="entry-text">
+        <p>Los "Treinta Gloriosos" (1945–1975) representaron la edad de oro del capitalismo occidental. El Plan Marshall reconstruyó Europa, los acuerdos de Bretton Woods estabilizaron las finanzas internacionales y el Estado del Bienestar garantizó educación, salud y pensiones a amplias capas de la población.</p>
+        <br>
+        <p>La clase media se expandió como nunca antes. El automóvil propio, la nevera, la lavadora y la televisión dejaron de ser lujos para convertirse en bienes de consumo ordinario. Los suburbios crecieron. Los centros comerciales nacieron. La tarjeta de crédito (Diners Club, 1950; BankAmericard, 1958) hizo posible consumir antes de tener.</p>
+        <br>
+        <p>La globalización productiva comenzó silenciosamente: las multinacionales americanas se instalaron en Europa y Japón. El dólar como moneda de reserva global y el petróleo barato sustentaron un crecimiento sin precedentes que, sin embargo, tenía un límite: el shock petrolero de 1973 anunció el fin de este ciclo excepcional.</p>
+        <div class="entry-tags">
+          <span class="tag">Estado de Bienestar</span>
+          <span class="tag">Clase media</span>
+          <span class="tag">Bretton Woods</span>
+          <span class="tag">Sociedad de consumo</span>
+        </div>
+      </div>
+      <button class="expand-btn" onclick="event.stopPropagation(); toggleCard(this.parentElement)">
+        Leer más <span class="arrow">→</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 9 -->
+  <div class="entry" data-index="9">
+    <div class="entry-card" onclick="toggleCard(this)">
+      <div class="entry-number">09</div>
+      <p class="entry-era">1970 — 2000s</p>
+      <h2 class="entry-title">Globalización y Tecnología</h2>
+      <p class="entry-subtitle">El mundo interconectado</p>
+      <div class="entry-text">
+        <p>La crisis del petróleo de 1973 y el colapso de Bretton Woods marcaron el giro neoliberal: Thatcher en Gran Bretaña y Reagan en EE.UU. desregularon mercados, privatizaron empresas públicas y debilitaron los sindicatos. El capital comenzó a fluir libremente a través de las fronteras.</p>
+        <br>
+        <p>La globalización productiva reloc alizó la manufactura hacia Asia —primero Japón y los "tigres asiáticos", luego China. Internet, surgida de ARPANet y popularizada por la World Wide Web (1991), interconectó economías, empresas y personas en tiempo real. La burbuja puntocom (1995–2000) fue el primer gran delirio especulativo de la era digital.</p>
+        <br>
+        <p>Los avances en computación personal —IBM PC (1981), Apple Macintosh (1984), Windows 95— democratizaron el acceso a la información y crearon nuevas industrias. El surgimiento de los smartphones al final de este período completó la arquitectura de un capitalismo que ya no reconocía fronteras geográficas.</p>
+        <div class="entry-tags">
+          <span class="tag">Neoliberalismo</span>
+          <span class="tag">Internet</span>
+          <span class="tag">Globalización</span>
+          <span class="tag">Digitalización</span>
+        </div>
+      </div>
+      <button class="expand-btn" onclick="event.stopPropagation(); toggleCard(this.parentElement)">
+        Leer más <span class="arrow">→</span>
+      </button>
+    </div>
+    <div class="entry-node"><div class="node-circle"></div></div>
+    <div class="entry-empty"></div>
+  </div>
+
+  <!-- 10 -->
+  <div class="entry rust" data-index="10">
+    <div class="entry-empty"></div>
+    <div class="entry-node"><div class="node-circle"></div></div>
+    <div class="entry-card" onclick="toggleCard(this)">
+      <div class="entry-number">10</div>
+      <p class="entry-era">2000s — Presente</p>
+      <h2 class="entry-title">Capitalismo Global Estratégico</h2>
+      <p class="entry-subtitle">Poder empresarial, datos y control de recursos</p>
+      <div class="entry-text">
+        <p>En la etapa actual, las grandes corporaciones no se limitan a operar en la economía: la moldean activamente. Apple, Amazon, Google, Microsoft y Meta concentran poder económico y político comparable al de muchos Estados-nación. Sus plataformas controlan los flujos de información, el comercio, la comunicación y la atención de miles de millones de personas.</p>
+        <br>
+        <p>La financiarización ha alcanzado su apogeo: los mercados de derivados, los fondos de inversión como BlackRock y Vanguard y las criptomonedas han creado una economía financiera que supera en volumen decenas de veces a la economía real. La crisis de 2008 reveló la fragilidad sistémica de este modelo.</p>
+        <br>
+        <p>El control de recursos estratégicos —semiconductores, tierras raras, datos, energías renovables— define las nuevas geopolíticas. La rivalidad entre EE.UU. y China es, en esencia, una batalla por el liderazgo del capitalismo global. La inteligencia artificial emerge como la próxima gran frontera de acumulación y concentración de poder.</p>
+        <div class="entry-tags">
+          <span class="tag">Big Tech</span>
+          <span class="tag">Financiarización</span>
+          <span class="tag">Datos & IA</span>
+          <span class="tag">Geopolítica</span>
+        </div>
+      </div>
+      <button class="expand-btn" onclick="event.stopPropagation(); toggleCard(this.parentElement)">
+        Leer más <span class="arrow">→</span>
+      </button>
+    </div>
+  </div>
+
+</section>
+
+<footer>
+  <p>Capitalismo a través de la Historia &nbsp;·&nbsp; Siglos IX–XXI &nbsp;·&nbsp; Historia Económica</p>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top  = my + 'px';
+  });
+
+  function animRing() {
+    rx += (mx - rx) * 0.15;
+    ry += (my - ry) * 0.15;
+    ring.style.left = rx + 'px';
+    ring.style.top  = ry + 'px';
+    requestAnimationFrame(animRing);
+  }
+  animRing();
+
+  // Scroll reveal
+  const entries = document.querySelectorAll('.entry');
+  const io = new IntersectionObserver((obs) => {
+    obs.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  entries.forEach(e => io.observe(e));
+
+  // Toggle expand
+  function toggleCard(card) {
+    const isOpen = card.classList.contains('open');
+    // close all
+    document.querySelectorAll('.entry-card.open').forEach(c => c.classList.remove('open'));
+    if (!isOpen) card.classList.add('open');
+  }
+</script>
+</body>
+</html>
